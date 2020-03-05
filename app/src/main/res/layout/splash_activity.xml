@@ -24,12 +24,13 @@
         android:layout_width="@dimen/splash_logo_sd_text_width"
         android:layout_height="@dimen/splash_logo_sd_text_height"
         android:layout_marginStart="@dimen/splash_logo_sd_text_margin"
+        android:foregroundTint="#FFFFFF"
+        android:src="@drawable/ic_logo_sd_text"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_logo_sd_symbol"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_logo_sd_text" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
         android:id="@+id/progres"
