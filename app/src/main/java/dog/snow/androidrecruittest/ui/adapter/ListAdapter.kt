@@ -68,13 +68,11 @@ class ListAdapter(val ctx: Context, private val list : ArrayList<ListItem>) :
     }
 
 
-
-    // Filter Class
-    fun filter(charText: String) {
-        var charText = charText
+    fun filter(text: String) {
+        var charText = text
         charText = charText.toLowerCase(Locale.getDefault())
         Global.getInstance()!!.itemList.clear()
-        if (charText.length == 0) {
+        if (charText.isEmpty()) {
             Global.getInstance()!!.itemList.addAll(arraylist)
         } else {
             for (wp in arraylist) {

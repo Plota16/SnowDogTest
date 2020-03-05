@@ -13,8 +13,10 @@
     app:layout_constraintTop_toTopOf="parent"
     app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
-    <com.google.android.material.textfield.TextInputEditText
+    <SearchView
         android:id="@+id/et_search"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false">
+        </SearchView>
 </com.google.android.material.textfield.TextInputLayout>
