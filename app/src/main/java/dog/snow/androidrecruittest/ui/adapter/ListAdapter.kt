@@ -1,21 +1,24 @@
 package dog.snow.androidrecruittest.ui.adapter
 
 
-import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.RequestOptions
 import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.repository.model.Global
 import dog.snow.androidrecruittest.ui.model.ListItem
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 class ListAdapter(val ctx: Context, private val list : ArrayList<ListItem>) :
     RecyclerView.Adapter<MyViewHolder>() {
@@ -37,10 +40,26 @@ class ListAdapter(val ctx: Context, private val list : ArrayList<ListItem>) :
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.tvTitle.text = list[position].title
         holder.tvAlbumTitle.text = list[position].albumTitle
-        val url = list[position].thumbnailUrl
-        if(position == 1){
-            Glide.with(ctx).load(url).centerCrop().into(holder.ivThumb)
+
+        val url = GlideUrl(
+            list[position].thumbnailUrl, LazyHeaders.Builder()
+                .addHeader("User-Agent", "your-user-agent")
+                .build()
+        )
+
+        val options: RequestOptions?
+        val currentNightMode = ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
+           options = RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.drawable.ic_placeholder)
         }
+        else{
+            options = RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.drawable.ic_placeholder_dark)
+        }
+        Glide.with(ctx).load(url)
+            .transition(withCrossFade())
+            .apply(options)
+            .into(holder.ivThumb)
+
 
     }
 
@@ -49,13 +68,11 @@ class ListAdapter(val ctx: Context, private val list : ArrayList<ListItem>) :
     }
 
 
-
-    // Filter Class
-    fun filter(charText: String) {
-        var charText = charText
+    fun filter(text: String) {
+        var charText = text
         charText = charText.toLowerCase(Locale.getDefault())
         Global.getInstance()!!.itemList.clear()
-        if (charText.length == 0) {
+        if (charText.isEmpty()) {
             Global.getInstance()!!.itemList.addAll(arraylist)
         } else {
             for (wp in arraylist) {
