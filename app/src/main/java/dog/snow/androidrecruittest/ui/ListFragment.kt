@@ -31,7 +31,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        menageDarkMode()
+        manageDarkMode()
 
         adapter = ListAdapter(requireContext(), Global.getInstance()!!.itemList)
         rv_items!!.adapter = adapter
@@ -55,7 +55,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
     et_search.setOnQueryTextListener(this)
     }
 
-    private fun menageDarkMode(){
+    private fun manageDarkMode(){
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
             val colorValue = ContextCompat.getColor(requireContext(), R.color.dark_background_color)

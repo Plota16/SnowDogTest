@@ -21,13 +21,14 @@ class SplashActivity : Activity() {
     private lateinit var text: ImageView
 
      override fun onCreate(icicle: Bundle?) {
-         super.onCreate(icicle)
          setContentView(R.layout.splash_activity)
-
          logo = findViewById(R.id.iv_logo_sd_symbol)
          text = findViewById(R.id.iv_logo_sd_text)
-
          menageDarkMode()
+         super.onCreate(icicle)
+
+
+
          setIntroAnimation()
          executeDownloadTask()
 
@@ -37,11 +38,14 @@ class SplashActivity : Activity() {
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
             logo.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN)
-            text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN);
+            text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN)
+            window.statusBarColor = resources.getColor(R.color.sd_color_black_mask);
         }
         if(currentNightMode == Configuration.UI_MODE_NIGHT_NO){
             logo.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_black), android.graphics.PorterDuff.Mode.SRC_IN)
-            text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_black), android.graphics.PorterDuff.Mode.SRC_IN);
+            text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_black), android.graphics.PorterDuff.Mode.SRC_IN)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            window.statusBarColor = resources.getColor(R.color.sd_color_white);
         }
     }
 
