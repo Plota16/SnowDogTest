@@ -18,12 +18,12 @@ import java.net.URL
 class DownloadDataService(var activity: Activity) : AsyncTask<String, Int, Long>() {
 
     private val url = "https://jsonplaceholder.typicode.com/"
-    var userList = HashMap<Int,RawUser>()
-    var photoList = HashMap<Int,RawPhoto>()
-    var albumList = HashMap<Int,RawAlbum>()
+    private var userList = HashMap<Int,RawUser>()
+    private var photoList = HashMap<Int,RawPhoto>()
+    private var albumList = HashMap<Int,RawAlbum>()
 
-    var downloadedAlbums = java.util.ArrayList<Int>()
-    var downloadedUsers = java.util.ArrayList<Int>()
+    private var downloadedAlbums = java.util.ArrayList<Int>()
+    private var downloadedUsers = java.util.ArrayList<Int>()
 
 
 
@@ -34,14 +34,15 @@ class DownloadDataService(var activity: Activity) : AsyncTask<String, Int, Long>
         downloadUsers()
 
         storeData()
+
+
         return 0
     }
 
 
-    fun storeData(){
+    private fun storeData(){
         Global.getInstance()!!.itemList = createItemList()
         Global.getInstance()!!.detailList = createDetailList()
-
     }
 
     private fun createItemList(): ArrayList<ListItem>{
@@ -155,8 +156,7 @@ class DownloadDataService(var activity: Activity) : AsyncTask<String, Int, Long>
     }
 
     override fun onPostExecute(result: Long?) {
-        val mainIntent = Intent(activity, MainActivity::class.java)
-        activity.startActivity(mainIntent)
-        activity.finish()
+        Global.getInstance()!!.isDataDownloaded = true
+
     }
 }

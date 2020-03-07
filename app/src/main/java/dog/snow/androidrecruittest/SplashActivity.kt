@@ -3,6 +3,7 @@ package dog.snow.androidrecruittest
 import DownloadDataService
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
@@ -10,10 +11,14 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.load.engine.Resource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.layout_progressbar.*
+import dog.snow.androidrecruittest.repository.model.Global
 import kotlinx.android.synthetic.main.splash_activity.*
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 class SplashActivity : Activity() {
 
@@ -32,6 +37,18 @@ class SplashActivity : Activity() {
          setIntroAnimation()
          executeDownloadTask()
 
+         GlobalScope.launch(context = Main){
+             while (!Global.getInstance()!!.isDataDownloaded){
+                 delay(20)
+             }
+             setOutroAnimation()
+         }
+    }
+
+    private fun startMainActivity(){
+        val mainIntent = Intent(this, MainActivity::class.java)
+        this.startActivity(mainIntent)
+        this.finish()
     }
 
     private fun menageDarkMode(){
@@ -57,16 +74,39 @@ class SplashActivity : Activity() {
             text.translationX = -value
         }
         valueAnimator.interpolator = LinearInterpolator()
-        valueAnimator.duration =  1000
+        valueAnimator.duration =  500
         valueAnimator.start()
     }
+
+    private fun setOutroAnimation(){
+        val valueAnimator = ValueAnimator.ofFloat(0f, -1200f)
+        valueAnimator.addUpdateListener {
+            val value = it.animatedValue as Float
+            logo.translationY = value
+            text.translationY = value
+        }
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.duration =  500
+        valueAnimator.start()
+        progres.visibility = View.GONE
+
+        Handler().postDelayed({
+            startMainActivity()
+        }, 500)
+
+    }
+
+
 
     private fun executeDownloadTask(){
         Handler().postDelayed({
             progres.visibility = View.VISIBLE
+        }, 500)
+
+        Handler().postDelayed({
             val task = DownloadDataService(this)
             task.execute().get()
-        }, 1200)
+        }, 600)
     }
 
     private fun showError(errorMessage: String?) {

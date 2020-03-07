@@ -6,6 +6,11 @@ import java.util.ArrayList
 
 class Global {
 
+    //state variables
+    var isDataDownloaded = false
+
+
+
     var itemList = ArrayList<ListItem>()
     var detailList = ArrayList<Detail>()
 
