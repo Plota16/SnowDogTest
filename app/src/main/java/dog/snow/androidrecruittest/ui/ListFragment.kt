@@ -69,11 +69,15 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
             val colorValue = ContextCompat.getColor(requireContext(), R.color.dark_background_color)
+            val colorSearch = ContextCompat.getColor(requireContext(), R.color.sd_color_black_mask)
             layout.setBackgroundColor(colorValue)
+            et_search.setBackgroundColor(colorSearch)
         }
         if(currentNightMode == Configuration.UI_MODE_NIGHT_NO){
             val colorValue = ContextCompat.getColor(requireContext(), R.color.light_background_color)
+            val colorSearch = ContextCompat.getColor(requireContext(), R.color.sd_color_white_mask)
             layout.setBackgroundColor(colorValue)
+            et_search.setBackgroundColor(colorSearch)
         }
     }
 
