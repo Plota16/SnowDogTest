@@ -32,8 +32,6 @@ class SplashActivity : Activity() {
          menageDarkMode()
          super.onCreate(icicle)
 
-
-
          setIntroAnimation()
          executeDownloadTask()
 
@@ -96,8 +94,6 @@ class SplashActivity : Activity() {
 
     }
 
-
-
     private fun executeDownloadTask(){
         Handler().postDelayed({
             progres.visibility = View.VISIBLE
@@ -106,7 +102,7 @@ class SplashActivity : Activity() {
         Handler().postDelayed({
             val task = DownloadDataService(this)
             task.execute().get()
-        }, 600)
+        }, 650)
     }
 
     private fun showError(errorMessage: String?) {

@@ -11,24 +11,36 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import dog.snow.androidrecruittest.repository.model.Global
+import dog.snow.androidrecruittest.ui.DetailsFragment
 import dog.snow.androidrecruittest.ui.ListFragment
 import kotlinx.android.synthetic.main.layout_toolbar.*
 
 class MainActivity : AppCompatActivity(R.layout.main_activity){
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
 
         manageDarkMode()
+        initTransaction()
 
-        val manager = supportFragmentManager
-        val transaction = manager.beginTransaction()
-        val fragmentList = ListFragment()
-        transaction.add(R.id.container, fragmentList)
+    }
+
+    private fun initTransaction(){
+        Global.getInstance()!!.manager = supportFragmentManager
+        val transaction = Global.getInstance()!!.manager!!.beginTransaction()
+        Global.getInstance()!!.fragmentList = ListFragment()
+        Global.getInstance()!!.fragmentDetails = DetailsFragment()
+        transaction.add(R.id.container, Global.getInstance()!!.fragmentList!!)
+        transaction.add(R.id.container, Global.getInstance()!!.fragmentDetails!!)
+        transaction.hide(Global.getInstance()!!.fragmentDetails!!)
         transaction.commit()
-
-
     }
 
     private fun manageDarkMode(){

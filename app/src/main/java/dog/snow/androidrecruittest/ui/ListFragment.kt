@@ -9,6 +9,7 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.repository.model.Global
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.list_fragment.*
 class ListFragment : Fragment(), SearchView.OnQueryTextListener{
 
     var adapter : ListAdapter? = null
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -32,7 +34,11 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
         super.onViewCreated(view, savedInstanceState)
 
         manageDarkMode()
+        initList()
 
+    }
+
+    private fun initList(){
         adapter = ListAdapter(requireContext(), Global.getInstance()!!.itemList)
         rv_items!!.adapter = adapter
         rv_items!!.layoutManager = LinearLayoutManager(requireContext())
@@ -42,7 +48,11 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
                 rv_items!!,
                 object : ClickListener{
                     override fun onClick(view: View, position: Int) {
-                        Toast.makeText(requireContext(), position.toString(), Toast.LENGTH_SHORT).show()
+                        Global.getInstance()!!.fragmentDetails!!.detailId = Global.getInstance()!!.itemList[position].id
+                        val transaction: FragmentTransaction = Global.getInstance()!!.manager!!.beginTransaction()
+                        transaction.hide(Global.getInstance()!!.fragmentList!!)
+                        transaction.show(Global.getInstance()!!.fragmentDetails!!)
+                        transaction.commit()
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
@@ -52,7 +62,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
 
             )
         )
-    et_search.setOnQueryTextListener(this)
+        et_search.setOnQueryTextListener(this)
     }
 
     private fun manageDarkMode(){

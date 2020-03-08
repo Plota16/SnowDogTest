@@ -60,8 +60,8 @@ class DownloadDataService(var activity: Activity) : AsyncTask<String, Int, Long>
         return result
     }
 
-    private fun createDetailList(): ArrayList<Detail>{
-        val result = ArrayList<Detail>()
+    private fun createDetailList(): HashMap<Int,Detail>{
+        val result = HashMap<Int,Detail>()
         for((_,photo) in photoList) {
             val album = albumList[photo.albumId]
             val user = userList[album!!.userId]
@@ -74,7 +74,7 @@ class DownloadDataService(var activity: Activity) : AsyncTask<String, Int, Long>
                 phone = user.phone,
                 url = user.website
             )
-            result.add(item)
+            result[item.photoId] = item
         }
         return result
     }

@@ -76,7 +76,7 @@ class ListAdapter(val ctx: Context, private val list : ArrayList<ListItem>) :
             Global.getInstance()!!.itemList.addAll(arraylist)
         } else {
             for (wp in arraylist) {
-                if (wp.title.toLowerCase(Locale.getDefault()).contains(charText)) {
+                if (wp.title.toLowerCase(Locale.getDefault()).contains(charText) or wp.albumTitle.toLowerCase(Locale.getDefault()).contains(charText)) {
                     Global.getInstance()!!.itemList.add(wp)
                 }
             }
