@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.repository.model.Global
-import dog.snow.androidrecruittest.ui.adapter.ClickListener
+import dog.snow.androidrecruittest.ui.adapter.IClickListener
 import dog.snow.androidrecruittest.ui.adapter.ListAdapter
 import dog.snow.androidrecruittest.ui.adapter.RecyclerTouchListener
 import kotlinx.android.synthetic.main.layout_search.*
@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.list_fragment.*
 class ListFragment : Fragment(), SearchView.OnQueryTextListener{
 
     var adapter : ListAdapter? = null
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -31,8 +32,12 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        menageDarkMode()
+        manageDarkMode()
+        initList()
 
+    }
+
+    private fun initList(){
         adapter = ListAdapter(requireContext(), Global.getInstance()!!.itemList)
         rv_items!!.adapter = adapter
         rv_items!!.layoutManager = LinearLayoutManager(requireContext())
@@ -40,9 +45,14 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
             RecyclerTouchListener(
                 requireContext(),
                 rv_items!!,
-                object : ClickListener{
+                object : IClickListener{
                     override fun onClick(view: View, position: Int) {
-                        Toast.makeText(requireContext(), position.toString(), Toast.LENGTH_SHORT).show()
+                        Global.getInstance()!!.fragmentDetails!!.detailId = Global.getInstance()!!.itemList[position].id
+                        val transaction: FragmentTransaction = Global.getInstance()!!.manager!!.beginTransaction()
+                        transaction.hide(Global.getInstance()!!.fragmentList!!)
+                        transaction.show(Global.getInstance()!!.fragmentDetails!!)
+                        transaction.commit()
+                        Global.getInstance()!!.isDetailShowed = true
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
@@ -52,18 +62,22 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
 
             )
         )
-    et_search.setOnQueryTextListener(this)
+        et_search.setOnQueryTextListener(this)
     }
 
-    private fun menageDarkMode(){
+    private fun manageDarkMode(){
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
             val colorValue = ContextCompat.getColor(requireContext(), R.color.dark_background_color)
+            val colorSearch = ContextCompat.getColor(requireContext(), R.color.sd_color_black_mask)
             layout.setBackgroundColor(colorValue)
+            et_search.setBackgroundColor(colorSearch)
         }
         if(currentNightMode == Configuration.UI_MODE_NIGHT_NO){
             val colorValue = ContextCompat.getColor(requireContext(), R.color.light_background_color)
+            val colorSearch = ContextCompat.getColor(requireContext(), R.color.sd_color_white_mask)
             layout.setBackgroundColor(colorValue)
+            et_search.setBackgroundColor(colorSearch)
         }
     }
 

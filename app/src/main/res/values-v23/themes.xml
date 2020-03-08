@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Base.AppTheme" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
-
-    <style name="AppTheme" parent="Base.AppTheme"/>
-
-    <style name="AppTheme.SplashTheme" >
+    <style name="AppTheme.SplashTheme">
         <item name="android:statusBarColor">@color/sd_color_white</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
-
 </resources>
