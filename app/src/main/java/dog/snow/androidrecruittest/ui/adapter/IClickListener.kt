@@ -2,7 +2,7 @@ package dog.snow.androidrecruittest.ui.adapter
 
 import android.view.View
 
-interface ClickListener {
+interface IClickListener {
     fun onClick(view: View, position: Int)
 
     fun onLongClick(view: View?, position: Int)

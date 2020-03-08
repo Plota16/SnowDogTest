@@ -20,6 +20,7 @@ class Global {
 
     var itemList = ArrayList<ListItem>()
     var detailList = HashMap<Int,Detail>()
+    var isDetailShowed = false
 
 
     companion object {

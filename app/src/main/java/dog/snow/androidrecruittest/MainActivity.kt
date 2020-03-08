@@ -1,26 +1,17 @@
 package dog.snow.androidrecruittest
 
-import android.content.Context
+
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.PowerManager
 import android.view.View
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import dog.snow.androidrecruittest.repository.model.Global
 import dog.snow.androidrecruittest.ui.DetailsFragment
 import dog.snow.androidrecruittest.ui.ListFragment
 import kotlinx.android.synthetic.main.layout_toolbar.*
 
 class MainActivity : AppCompatActivity(R.layout.main_activity){
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +21,19 @@ class MainActivity : AppCompatActivity(R.layout.main_activity){
         manageDarkMode()
         initTransaction()
 
+    }
+
+    override fun onBackPressed() {
+        if(Global.getInstance()!!.isDetailShowed){
+            val transaction = Global.getInstance()!!.manager!!.beginTransaction()
+            transaction.hide(Global.getInstance()!!.fragmentDetails!!)
+            transaction.show(Global.getInstance()!!.fragmentList!!)
+            transaction.commit()
+            Global.getInstance()!!.isDetailShowed = false
+        }
+        else{
+            super.onBackPressed()
+        }
     }
 
     private fun initTransaction(){
@@ -61,8 +65,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity){
 
         }
         supportActionBar!!.setBackgroundDrawable(actionBarColor)
-
-
-
     }
+
+
 }

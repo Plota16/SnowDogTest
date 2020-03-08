@@ -72,7 +72,7 @@ class DownloadDataService(var activity: Activity) : AsyncTask<String, Int, Long>
                 username = user!!.username,
                 email = user.email,
                 phone = user.phone,
-                url = user.website
+                url = photo.url
             )
             result[item.photoId] = item
         }

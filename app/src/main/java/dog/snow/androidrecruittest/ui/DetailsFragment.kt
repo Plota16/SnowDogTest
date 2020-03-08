@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import dog.snow.androidrecruittest.R
@@ -19,9 +21,7 @@ class DetailsFragment : Fragment(){
 
     var detailId = 0
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.details_fragment, container, false)
     }
 
@@ -42,13 +42,16 @@ class DetailsFragment : Fragment(){
 
             loadImage(item.url)
 
+
         }
     }
 
-    nav
-
-
-    private fun loadImage(url : String){
+    private fun loadImage(baseUrl : String){
+        val url = GlideUrl(
+            baseUrl, LazyHeaders.Builder()
+                .addHeader("User-Agent", "your-user-agent")
+                .build()
+        )
         val options: RequestOptions?
         val currentNightMode = requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         options = if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
