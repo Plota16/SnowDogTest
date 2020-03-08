@@ -15,7 +15,7 @@ import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.URL
 
-class DownloadDataService(var activity: Activity) : AsyncTask<String, Int, Long>() {
+class DownloadDataService() : AsyncTask<String, Int, Long>() {
 
     private val url = "https://jsonplaceholder.typicode.com/"
     private var userList = HashMap<Int,RawUser>()

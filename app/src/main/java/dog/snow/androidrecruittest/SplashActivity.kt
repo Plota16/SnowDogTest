@@ -1,12 +1,14 @@
 package dog.snow.androidrecruittest
 
 import DownloadDataService
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
@@ -24,14 +26,15 @@ class SplashActivity : Activity() {
 
     private lateinit var logo: ImageView
     private lateinit var text: ImageView
-
+    private var width : Float = 0.0f
+    private var height : Float = 0.0f
+    private var animationDuration = 700.toLong()
      override fun onCreate(icicle: Bundle?) {
          setContentView(R.layout.splash_activity)
-         logo = findViewById(R.id.iv_logo_sd_symbol)
-         text = findViewById(R.id.iv_logo_sd_text)
-         menageDarkMode()
          super.onCreate(icicle)
 
+         initVariables()
+         menageDarkMode()
          setIntroAnimation()
          executeDownloadTask()
 
@@ -41,6 +44,16 @@ class SplashActivity : Activity() {
              }
              setOutroAnimation()
          }
+    }
+
+    private fun initVariables(){
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        logo = findViewById(R.id.iv_logo_sd_symbol)
+        text = findViewById(R.id.iv_logo_sd_text)
+        width = displayMetrics.widthPixels.toFloat()
+        height = displayMetrics.heightPixels.toFloat()
     }
 
     private fun startMainActivity(){
@@ -65,44 +78,44 @@ class SplashActivity : Activity() {
     }
 
     private fun setIntroAnimation(){
-        val valueAnimator = ValueAnimator.ofFloat(-900f,0f)
-        valueAnimator.addUpdateListener {
-            val value = it.animatedValue as Float
-            logo.translationX = value
-            text.translationX = -value
-        }
-        valueAnimator.interpolator = LinearInterpolator()
-        valueAnimator.duration =  500
-        valueAnimator.start()
+        val objectAnimatorLogo = ObjectAnimator.ofFloat(logo,"translationX",-width,0f)
+        val objectAnimatorText = ObjectAnimator.ofFloat(text,"translationX",width,0f)
+
+        objectAnimatorLogo.duration = animationDuration
+        objectAnimatorText.duration = animationDuration
+
+        objectAnimatorLogo.start()
+        objectAnimatorText.start()
+
     }
 
     private fun setOutroAnimation(){
-        val valueAnimator = ValueAnimator.ofFloat(0f, -1200f)
-        valueAnimator.addUpdateListener {
-            val value = it.animatedValue as Float
-            logo.translationY = value
-            text.translationY = value
-        }
-        valueAnimator.interpolator = LinearInterpolator()
-        valueAnimator.duration =  500
-        valueAnimator.start()
         progres.visibility = View.GONE
 
-        Handler().postDelayed({
-            startMainActivity()
-        }, 500)
+        val objectAnimatorLogo = ObjectAnimator.ofFloat(logo,"translationY",0f,-height)
+        val objectAnimatorText = ObjectAnimator.ofFloat(text,"translationY",0f,-height)
 
+        objectAnimatorLogo.duration = animationDuration
+        objectAnimatorText.duration = animationDuration
+
+        objectAnimatorLogo.start()
+        objectAnimatorText.start()
+
+        GlobalScope.launch(Main) {
+            delay(animationDuration)
+            startMainActivity()
+        }
     }
 
     private fun executeDownloadTask(){
-        Handler().postDelayed({
+        GlobalScope.launch(Main){
+            delay(animationDuration)
             progres.visibility = View.VISIBLE
-        }, 500)
+            delay(150)
+            val task = DownloadDataService()
+            task.execute()
+        }
 
-        Handler().postDelayed({
-            val task = DownloadDataService(this)
-            task.execute().get()
-        }, 650)
     }
 
     private fun showError(errorMessage: String?) {
