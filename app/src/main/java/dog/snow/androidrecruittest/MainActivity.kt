@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import dog.snow.androidrecruittest.repository.model.Global
+import dog.snow.androidrecruittest.repository.service.ConnectionObserver
 import dog.snow.androidrecruittest.ui.DetailsFragment
 import dog.snow.androidrecruittest.ui.ListFragment
 import kotlinx.android.synthetic.main.layout_toolbar.*
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity){
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        Thread(ConnectionObserver(this,this)).start()
         manageDarkMode()
         initTransaction()
 

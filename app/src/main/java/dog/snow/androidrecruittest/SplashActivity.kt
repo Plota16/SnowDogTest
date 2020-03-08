@@ -4,8 +4,10 @@ import DownloadDataService
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -20,6 +22,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 
 class SplashActivity : Activity() {
@@ -36,7 +39,7 @@ class SplashActivity : Activity() {
          initVariables()
          menageDarkMode()
          setIntroAnimation()
-         executeDownloadTask()
+         downloadData()
 
          GlobalScope.launch(context = Main){
              while (!Global.getInstance()!!.isDataDownloaded){
@@ -122,10 +125,25 @@ class SplashActivity : Activity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.cant_download_dialog_title)
             .setMessage(getString(R.string.cant_download_dialog_message, errorMessage))
-            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> /*tryAgain()*/ }
+            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> downloadData() }
             .setNegativeButton(R.string.cant_download_dialog_btn_negative) { _, _ -> finish() }
             .create()
             .apply { setCanceledOnTouchOutside(false) }
             .show()
+    }
+
+    fun downloadData(){
+        if(isNetworkOn(this)){
+            executeDownloadTask()
+        }
+        else{
+            showError("No Internet Connection")
+        }
+    }
+
+    fun isNetworkOn(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }
