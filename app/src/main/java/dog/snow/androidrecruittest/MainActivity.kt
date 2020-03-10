@@ -6,6 +6,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.transition.Fade
+import android.transition.TransitionInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,6 +20,13 @@ import kotlinx.android.synthetic.main.layout_toolbar.*
 
 class MainActivity : AppCompatActivity(R.layout.main_activity){
 
+    override fun onDestroy() {
+
+        Global.getInstance()!!.isDataDownloaded = false
+        Global.getInstance()!!.isDetailShowed = false
+        Global.getInstance()!!.isError = false
+        super.onDestroy()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +54,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity){
     private fun initTransaction(){
         Global.getInstance()!!.manager = supportFragmentManager
         val transaction = Global.getInstance()!!.manager!!.beginTransaction()
-        Global.getInstance()!!.fragmentList =
-            ListFragment()
+        Global.getInstance()!!.fragmentList = ListFragment()
         transaction.replace(R.id.container, Global.getInstance()!!.fragmentList!!)
             .commit()
     }

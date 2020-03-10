@@ -10,14 +10,15 @@ class Global {
 
     //state variables
     var isDataDownloaded = false
+    var isDetailShowed = false
+    var isError = false
 
     var manager: FragmentManager? = null
     var fragmentList: ListFragment? = null
 
     var itemList = ArrayList<ListItem>()
     var detailList = HashMap<Int,Detail>()
-    var isDetailShowed = false
-    var isError = false
+
 
 
     companion object {

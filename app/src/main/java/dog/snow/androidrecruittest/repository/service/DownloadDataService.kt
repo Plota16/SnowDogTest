@@ -35,17 +35,10 @@ class DownloadDataService() : AsyncTask<String, Int, Long>() {
 
     override fun doInBackground(vararg parts: String): Long? {
 
-            try {
                 downloadPhotos()
                 downloadAlbums()
                 downloadUsers()
                 storeData()
-                Global.getInstance()!!.isError = false
-            }
-            catch (ex: FileNotFoundException){
-                Global.getInstance()!!.isError = true
-            }
-
 
 
         return 0
