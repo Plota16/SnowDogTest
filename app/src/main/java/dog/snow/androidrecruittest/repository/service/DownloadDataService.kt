@@ -9,7 +9,11 @@ import dog.snow.androidrecruittest.repository.model.RawPhoto
 import dog.snow.androidrecruittest.repository.model.RawUser
 import dog.snow.androidrecruittest.ui.model.Detail
 import dog.snow.androidrecruittest.ui.model.ListItem
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
+import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import java.lang.Exception
 import java.lang.StringBuilder
@@ -26,15 +30,22 @@ class DownloadDataService() : AsyncTask<String, Int, Long>() {
     private var downloadedAlbums = java.util.ArrayList<Int>()
     private var downloadedUsers = java.util.ArrayList<Int>()
 
+    private val limit = 100
 
 
     override fun doInBackground(vararg parts: String): Long? {
 
-        downloadPhotos()
-        downloadAlbums()
-        downloadUsers()
+            try {
+                downloadPhotos()
+                downloadAlbums()
+                downloadUsers()
+                storeData()
+                Global.getInstance()!!.isError = false
+            }
+            catch (ex: FileNotFoundException){
+                Global.getInstance()!!.isError = true
+            }
 
-        storeData()
 
 
         return 0
@@ -81,7 +92,7 @@ class DownloadDataService() : AsyncTask<String, Int, Long>() {
     }
 
     private fun downloadPhotos(){
-        val list = Gson().fromJson(getData("photos","?_limit=100"),Array<RawPhoto>::class.java).toList() as ArrayList<RawPhoto>
+        val list = Gson().fromJson(getData("photos","?_limit=$limit"),Array<RawPhoto>::class.java).toList() as ArrayList<RawPhoto>
         for(item : RawPhoto in list){
             photoList[item.id] = item
         }
@@ -157,7 +168,8 @@ class DownloadDataService() : AsyncTask<String, Int, Long>() {
     }
 
     override fun onPostExecute(result: Long?) {
-        Global.getInstance()!!.isDataDownloaded = true
-
+        if(!Global.getInstance()!!.isError){
+            Global.getInstance()!!.isDataDownloaded = true
+        }
     }
 }

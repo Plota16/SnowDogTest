@@ -1,9 +1,6 @@
 package dog.snow.androidrecruittest.repository.model
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
-import dog.snow.androidrecruittest.ui.DetailsFragment
 import dog.snow.androidrecruittest.ui.ListFragment
 import dog.snow.androidrecruittest.ui.model.Detail
 import dog.snow.androidrecruittest.ui.model.ListItem
@@ -20,6 +17,7 @@ class Global {
     var itemList = ArrayList<ListItem>()
     var detailList = HashMap<Int,Detail>()
     var isDetailShowed = false
+    var isError = false
 
 
     companion object {

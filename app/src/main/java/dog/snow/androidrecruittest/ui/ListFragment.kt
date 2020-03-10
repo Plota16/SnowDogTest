@@ -1,10 +1,7 @@
 package dog.snow.androidrecruittest.ui
 
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
-import android.transition.Fade
-import android.transition.Transition
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +23,7 @@ import kotlinx.android.synthetic.main.list_fragment.*
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener{
 
-    var adapter : ListAdapter? = null
+    private var adapter : ListAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -44,7 +41,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
     }
 
     private fun initList(){
-        adapter = ListAdapter(requireContext(), Global.getInstance()!!.itemList)
+        adapter = ListAdapter(requireContext(), requireActivity(),Global.getInstance()!!.itemList)
         rv_items!!.adapter = adapter
         rv_items!!.layoutManager = LinearLayoutManager(requireContext())
         rv_items!!.addOnItemTouchListener(
@@ -53,18 +50,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
                 rv_items!!,
                 object : IClickListener{
                     override fun onClick(view: View, position: Int) {
-                        val detailsFragment = DetailsFragment(Global.getInstance()!!.itemList[position].id)
-                        detailsFragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-                        val image = requireActivity().findViewById<ImageView>(R.id.iv_thumb)
-                        image.transitionName = requireActivity().resources.getString(R.string.simple_fragment_transition)
-
-                        val transaction: FragmentTransaction = Global.getInstance()!!.manager!!.beginTransaction()
-                            transaction.addSharedElement(image,requireActivity().resources.getString(R.string.simple_fragment_transition))
-                                .setReorderingAllowed(true)
-                                .replace(R.id.container,detailsFragment)
-                                .commit()
-
-                        Global.getInstance()!!.isDetailShowed = true
+                        onRecyclerClick(position)
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
@@ -75,6 +61,24 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
             )
         )
         et_search.setOnQueryTextListener(this)
+    }
+
+    private fun onRecyclerClick(position: Int){
+        val detailsFragment =
+            DetailsFragment(
+                Global.getInstance()!!.itemList[position].id
+            )
+        detailsFragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+        val image = requireActivity().findViewById<ImageView>(R.id.iv_thumb)
+        image.transitionName = requireActivity().resources.getString(R.string.simple_fragment_transition)
+
+        val transaction: FragmentTransaction = Global.getInstance()!!.manager!!.beginTransaction()
+        transaction.addSharedElement(image,requireActivity().resources.getString(R.string.simple_fragment_transition))
+            .setReorderingAllowed(true)
+            .replace(R.id.container,detailsFragment)
+            .commit()
+
+        Global.getInstance()!!.isDetailShowed = true
     }
 
     private fun manageDarkMode(){

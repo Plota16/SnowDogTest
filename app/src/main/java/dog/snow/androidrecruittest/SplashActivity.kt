@@ -2,31 +2,25 @@ package dog.snow.androidrecruittest
 
 import DownloadDataService
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.View
-import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dog.snow.androidrecruittest.repository.model.Global
-import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.splash_activity.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.image
-import org.jetbrains.anko.toolbar
-import java.lang.Exception
-
 
 class SplashActivity : Activity() {
 
@@ -45,13 +39,12 @@ class SplashActivity : Activity() {
          menageDarkMode()
          setIntroAnimation()
          downloadData()
-
-         GlobalScope.launch(context = Main){
-             while (!Global.getInstance()!!.isDataDownloaded){
-                 delay(20)
-             }
-             setOutroAnimation()
+         waitForData()
+         if(Global.getInstance()!!.isError){
+             showError("File not Found")
          }
+
+
     }
 
     private fun initVariables(){
@@ -73,15 +66,17 @@ class SplashActivity : Activity() {
     private fun menageDarkMode(){
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
-            logo.image = resources.getDrawable(R.drawable.ic_logo_sd_symbol_dark)
+            logo.image = ContextCompat.getDrawable(applicationContext,R.drawable.ic_logo_sd_symbol_dark)
             text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN)
-            window.statusBarColor = resources.getColor(R.color.sd_color_black_mask);
+            window.statusBarColor = ContextCompat.getColor(applicationContext,R.color.sd_color_black_mask)
         }
         if(currentNightMode == Configuration.UI_MODE_NIGHT_NO){
             logo.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_black), android.graphics.PorterDuff.Mode.SRC_IN)
             text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_black), android.graphics.PorterDuff.Mode.SRC_IN)
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            window.statusBarColor = resources.getColor(R.color.sd_color_white);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            }
+            window.statusBarColor = ContextCompat.getColor(applicationContext,R.color.sd_color_white)
         }
     }
 
@@ -122,6 +117,7 @@ class SplashActivity : Activity() {
             delay(150)
             val task = DownloadDataService()
             task.execute()
+
         }
 
     }
@@ -146,9 +142,20 @@ class SplashActivity : Activity() {
         }
     }
 
-    fun isNetworkOn(context: Context): Boolean {
+    private fun waitForData() {
+        GlobalScope.launch(context = Main){
+            while (!Global.getInstance()!!.isDataDownloaded){
+                delay(20)
+            }
+            setOutroAnimation()
+
+        }
+    }
+
+    private fun isNetworkOn(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
+
 }
