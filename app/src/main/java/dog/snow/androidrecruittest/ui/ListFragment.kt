@@ -1,10 +1,15 @@
 package dog.snow.androidrecruittest.ui
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.transition.Fade
+import android.transition.Transition
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -17,6 +22,7 @@ import dog.snow.androidrecruittest.ui.adapter.ListAdapter
 import dog.snow.androidrecruittest.ui.adapter.RecyclerTouchListener
 import kotlinx.android.synthetic.main.layout_search.*
 import kotlinx.android.synthetic.main.list_fragment.*
+
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener{
 
@@ -47,11 +53,17 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
                 rv_items!!,
                 object : IClickListener{
                     override fun onClick(view: View, position: Int) {
-                        Global.getInstance()!!.fragmentDetails!!.detailId = Global.getInstance()!!.itemList[position].id
+                        val detailsFragment = DetailsFragment(Global.getInstance()!!.itemList[position].id)
+                        detailsFragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+                        val image = requireActivity().findViewById<ImageView>(R.id.iv_thumb)
+                        image.transitionName = requireActivity().resources.getString(R.string.simple_fragment_transition)
+
                         val transaction: FragmentTransaction = Global.getInstance()!!.manager!!.beginTransaction()
-                        transaction.hide(Global.getInstance()!!.fragmentList!!)
-                        transaction.show(Global.getInstance()!!.fragmentDetails!!)
-                        transaction.commit()
+                            transaction.addSharedElement(image,requireActivity().resources.getString(R.string.simple_fragment_transition))
+                                .setReorderingAllowed(true)
+                                .replace(R.id.container,detailsFragment)
+                                .commit()
+
                         Global.getInstance()!!.isDetailShowed = true
                     }
 
@@ -89,4 +101,5 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
         adapter!!.filter(newText!!)
         return false
     }
+
 }

@@ -1,48 +1,86 @@
 package dog.snow.androidrecruittest.ui
 
 import android.content.res.Configuration
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.google.android.material.appbar.MaterialToolbar
 import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.repository.model.Global
 import kotlinx.android.synthetic.main.details_fragment.*
-import kotlinx.android.synthetic.main.list_fragment.*
-class DetailsFragment : Fragment(){
 
-    var detailId = 0
 
+class DetailsFragment(private var detailId : Int) : Fragment(){
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        postponeEnterTransition()
+        super.onCreate(savedInstanceState)
+
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         return inflater.inflate(R.layout.details_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initFragment()
         manageDarkMode()
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if(!hidden){
-            val item = Global.getInstance()!!.detailList[detailId]
-            tv_photo_title.text = item!!.photoTitle
-            tv_album_title.text = item.albumTitle
-            tv_email.text = item.email
-            tv_phone.text = item.phone
-            tv_username.text= item.username
+    private fun initFragment() {
 
-            loadImage(item.url)
+        val toolBar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
+        val textToolbar = requireActivity().findViewById<TextView>(R.id.toolbar_title)
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val item = Global.getInstance()!!.detailList[detailId]
+        tv_photo_title.text = item!!.photoTitle
+        tv_album_title.text = item.albumTitle
+        tv_email.text = item.email
+        tv_phone.text = item.phone
+        tv_username.text= item.username
+        loadImage(item.url)
+
+        val titlePlaceholder = "  " + item.photoTitle
+        textToolbar.text = titlePlaceholder
+
+        if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
+            toolBar.logo = resources.getDrawable(R.drawable.ic_arrow_back_white_24px)
+        }
+        else{
+            toolBar.logo = resources.getDrawable(R.drawable.ic_arrow_back_24px)
+        }
 
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val toolBar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
+        val textToolbar = requireActivity().findViewById<TextView>(R.id.toolbar_title)
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        textToolbar.text = resources.getString(R.string.app_name)
+        if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
+            toolBar.logo = resources.getDrawable(R.drawable.ic_logo_sd_symbol_dark)
+        }
+        else{
+            toolBar.logo = resources.getDrawable(R.drawable.ic_logo_sd_symbol)
         }
     }
 
@@ -55,13 +93,37 @@ class DetailsFragment : Fragment(){
         val options: RequestOptions?
         val currentNightMode = requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         options = if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
-            RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.drawable.ic_placeholder)
+            RequestOptions()
+                .placeholder(R.drawable.ic_placeholder)
         } else{
-            RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.drawable.ic_placeholder_dark)
+            RequestOptions()
+                .placeholder(R.drawable.ic_placeholder_dark)
         }
         Glide.with(requireContext()).load(url)
-            .transition(DrawableTransitionOptions.withCrossFade())
             .apply(options)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    startPostponedEnterTransition()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: com.bumptech.glide.load.DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    startPostponedEnterTransition()
+                    return false
+                }
+
+            })
             .into(iv_photo)
     }
 

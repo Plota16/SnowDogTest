@@ -6,5 +6,17 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
     android:fitsSystemWindows="true"
+
     app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-    app:logo="@drawable/ic_logo_appbar" />
+    app:logo="@drawable/ic_logo_appbar">
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+</com.google.android.material.appbar.MaterialToolbar>

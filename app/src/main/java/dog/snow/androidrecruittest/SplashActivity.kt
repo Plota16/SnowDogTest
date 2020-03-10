@@ -17,11 +17,14 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dog.snow.androidrecruittest.repository.model.Global
+import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.splash_activity.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.image
+import org.jetbrains.anko.toolbar
 import java.lang.Exception
 
 
@@ -32,9 +35,11 @@ class SplashActivity : Activity() {
     private var width : Float = 0.0f
     private var height : Float = 0.0f
     private var animationDuration = 700.toLong()
+
      override fun onCreate(icicle: Bundle?) {
          setContentView(R.layout.splash_activity)
          super.onCreate(icicle)
+
 
          initVariables()
          menageDarkMode()
@@ -68,7 +73,7 @@ class SplashActivity : Activity() {
     private fun menageDarkMode(){
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
-            logo.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN)
+            logo.image = resources.getDrawable(R.drawable.ic_logo_sd_symbol_dark)
             text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN)
             window.statusBarColor = resources.getColor(R.color.sd_color_black_mask);
         }
@@ -132,7 +137,7 @@ class SplashActivity : Activity() {
             .show()
     }
 
-    fun downloadData(){
+    private fun downloadData(){
         if(isNetworkOn(this)){
             executeDownloadTask()
         }

@@ -16,6 +16,7 @@
         android:scaleType="centerCrop"
         android:src="?attr/colorPrimary"
         app:layout_constraintDimensionRatio="1"
+        android:transitionName="@string/simple_fragment_transition"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
