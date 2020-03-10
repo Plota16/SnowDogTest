@@ -42,6 +42,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener{
 
     private fun initList(){
         adapter = ListAdapter(requireContext(), requireActivity(),Global.getInstance()!!.itemList)
+        et_search.setOnCloseListener { 
+         return@setOnCloseListener true
+        }
         rv_items!!.adapter = adapter
         rv_items!!.layoutManager = LinearLayoutManager(requireContext())
         rv_items!!.addOnItemTouchListener(
