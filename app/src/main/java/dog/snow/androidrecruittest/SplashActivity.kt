@@ -4,8 +4,10 @@ import DownloadDataService
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -15,11 +17,15 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dog.snow.androidrecruittest.repository.model.Global
+import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.splash_activity.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.image
+import org.jetbrains.anko.toolbar
+import java.lang.Exception
 
 
 class SplashActivity : Activity() {
@@ -29,14 +35,16 @@ class SplashActivity : Activity() {
     private var width : Float = 0.0f
     private var height : Float = 0.0f
     private var animationDuration = 700.toLong()
+
      override fun onCreate(icicle: Bundle?) {
          setContentView(R.layout.splash_activity)
          super.onCreate(icicle)
 
+
          initVariables()
          menageDarkMode()
          setIntroAnimation()
-         executeDownloadTask()
+         downloadData()
 
          GlobalScope.launch(context = Main){
              while (!Global.getInstance()!!.isDataDownloaded){
@@ -65,7 +73,7 @@ class SplashActivity : Activity() {
     private fun menageDarkMode(){
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if(currentNightMode == Configuration.UI_MODE_NIGHT_YES){
-            logo.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN)
+            logo.image = resources.getDrawable(R.drawable.ic_logo_sd_symbol_dark)
             text.setColorFilter(ContextCompat.getColor(applicationContext, R.color.sd_color_white), android.graphics.PorterDuff.Mode.SRC_IN)
             window.statusBarColor = resources.getColor(R.color.sd_color_black_mask);
         }
@@ -122,10 +130,25 @@ class SplashActivity : Activity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.cant_download_dialog_title)
             .setMessage(getString(R.string.cant_download_dialog_message, errorMessage))
-            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> /*tryAgain()*/ }
+            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> downloadData() }
             .setNegativeButton(R.string.cant_download_dialog_btn_negative) { _, _ -> finish() }
             .create()
             .apply { setCanceledOnTouchOutside(false) }
             .show()
+    }
+
+    private fun downloadData(){
+        if(isNetworkOn(this)){
+            executeDownloadTask()
+        }
+        else{
+            showError("No Internet Connection")
+        }
+    }
+
+    fun isNetworkOn(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

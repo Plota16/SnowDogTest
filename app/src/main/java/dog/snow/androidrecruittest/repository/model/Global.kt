@@ -16,7 +16,6 @@ class Global {
 
     var manager: FragmentManager? = null
     var fragmentList: ListFragment? = null
-    var fragmentDetails : DetailsFragment? = null
 
     var itemList = ArrayList<ListItem>()
     var detailList = HashMap<Int,Detail>()

@@ -5,6 +5,9 @@
     style="@style/Widget.AppTheme.Banner"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#FF9800"
+    android:gravity="center"
     android:text="@string/offline_mode"
+    android:textStyle="bold"
     android:visibility="gone"
     tools:visibility="visible" />
